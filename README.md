@@ -5,6 +5,7 @@
 
 *sudo usermod -aG docker $USER*
 ***newgrp docker***
+
 **docker ps**
 
 #### for docker 18.09.7
