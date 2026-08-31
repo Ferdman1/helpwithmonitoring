@@ -1,5 +1,16 @@
 <h1>helpwithmonitoring</h1>
 
+<div align="center">
+  <pre>
+  ███████╗██████╗ ██╗  ██╗██╗  ██╗██╗   ██╗██████╗ 
+  ██╔════╝██╔══██╗██║ ██╔╝██║  ██║██║   ██║██╔══██╗
+  ███████╗██████╔╝█████╔╝ ███████║██║   ██║██████╔╝
+  ╚════██║██╔═══╝ ██╔═██╗ ██╔══██║██║   ██║██╔══██╗
+  ███████║██║     ██║  ██╗██║  ██║╚██████╔╝██████╔╝
+  ╚══════╝╚═╝     ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═════╝ 
+  </pre>
+</div>
+
 ## docker + docker-compose to use in astra linux ##
 ```bash
 sudo apt install docker.io
@@ -15,6 +26,8 @@ sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-
 sudo chmod +x /usr/local/bin/docker-compose
 ```
 <h1>Install grafana + prometheus + node_exporter</h1>
+
+<h2>Prometheus</h2>
 
 ```bash
 sudo useradd --no-create-home --shell /bin/false prometheus
@@ -36,7 +49,7 @@ sudo cp -r console_libraries /etc/prometheus
 sudo cp prometheus.yml /etc/prometheus/prometheus.yml
 sudo chown -R prometheus:prometheus /etc/prometheus
 ```
-<h4>sudo nano /etc/prometheus/prometheus.yml</h4>
+> sudo nano /etc/prometheus/prometheus.yml
 
 ```yaml
 global:
@@ -53,7 +66,7 @@ scrape_configs:
       - targets: ['localhost:9100']
 ```
 
-sudo nano /etc/systemd/system/prometheus.service
+> sudo nano /etc/systemd/system/prometheus.service
 
 ```ini
 [Unit]
@@ -80,7 +93,7 @@ sudo systemctl daemon-reload
 sudo systemctl enable --now prometheus
 prometheus at localhost:9090
 ```
-## 🛠️ Основные команды для управления Prometheus
+### 🛠️ Основные команды для управления Prometheus
 
 | Действие | Команда |
 |----------|---------|
@@ -105,18 +118,15 @@ prometheus at localhost:9090
 </details>
 <h2>NODE EXPORTER</h2>
 
+```bash
 cd /tmp
-
 wget https://github.com/prometheus/node_exporter/releases/download/v1.7.0/node_exporter-1.7.0.linux-amd64.tar.gz
-
 tar -xvf node_exporter-1.7.0.linux-amd64.tar.gz
-
-sudo cp node_exporter-1.7.0.linux-amd64/node_exporter (пробел) /usr/local/bin
-
+sudo cp node_exporter-1.7.0.linux-amd64/node_exporter /usr/local/bin
 sudo chown node_exporter:node_exporter /usr/local/bin/node_exporter
+```
 
-
-sudo nano /etc/systemd/system/node_exporter.service
+> sudo nano /etc/systemd/system/node_exporter.service
 
 ```ini
 [Unit]
@@ -128,18 +138,25 @@ After=network-online.target
 User=node_exporter
 Group=node_exporter
 Type=simple
-ExecStart=/usr/local/bin/node_exporte
+ExecStart=/usr/local/bin/node_exporter
 
 [Install]
 WantedBy=multi-user.target
 ```
 
+```bash
 sudo systemctl daemon-reload
-
 sudo systemctl enable --now node_exporter
-
 sudo systemctl restart prometheus
+```
 
+<details>
+<summary>✅ Успешная работа prometheus + node_exporter</summary>
+
+#### *state is up* ####
+
+![Logo](images/prometheuslogo.png)
+</details>
 
 <h2>GRAFANA</h2>
 
@@ -153,14 +170,24 @@ sudo systemctl enable grafana-server
 sudo systemctl start grafana-server
 sudo systemctl status grafana-server
 ```
-localhost:9100 - node_exporter
 
-localhost:9090 - Prometheus
+> localhost:9100 - node_exporter \
+> localhost:9090 - Prometheus \
+> localhost:3000 - Grafana 
 
-localhost:3000 - Grafana
 
-admin
 
-admin
+<h1>Results</h1>
 
-import dashboard 1860
+<details>
+<summary>✅ Success</summary>
+  
+| Действие | Команда |
+|----------|---------|
+| ***open grafana*** | `localhost:3000` |
+| ***login&password*** | `admin : admin` |
+| ***установить коннект*** | `> Home > Connections > Add new connection > Prometheus > Add new data source > http://localhost:9090 > Save&Test ` |
+| ***дашборд 1860*** | `> Home > Dashboards > new > import > enter 1860 id(or smth like that)` |
+| ***Проверить визуализацию*** | `go to dashboards > pick ur dashboard > chill` |
+
+</details>
